@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+    <head>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>FindMyProf Student Feed</title>
+    </head>
+    <body>
+        <nav class="navbar bg-body-tertiary">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">
+                <!--<img src="" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">-->
+                FindMyProf App (Student)
+              </a>
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">You are logged in as {{ stuname }}. Click here to logout</a>
+                </li>
+                <!-- Add more right-aligned elements here -->
+                </ul>
+            </div>
+        </nav>
+        <div class="container-fluid">
+            <div class="card text-center">
+                <div class="card-body">
+                    
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Following</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">All Projects</a>
+                        </li>
+                        <li class="nav-item" role="search">
+                            <a class="nav-link" id="search-tab" data-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="false">Search</a>
+                        </li>
+                        <li class="nav-item" role="profs">
+                            <a class="nav-link" id="profs-tab" data-toggle="tab" href="#profs" role="tab" aria-controls="profs" aria-selected="false">My Professors</a>
+                        </li>
+                      </ul>
+                      
+                      <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            {% for item in projects %}
+                                {% if item.prof_name in student[0].following %}
+                                <!-- Each project -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        {{ item.title}}
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <img src="{{ url_for('static', filename='img/prof.jpg') }}" class="img-fluid">
+                                                    <b>{{item.prof_name}}</b>
+                                                </div>
+                                                <div class="col">
+                                                    <p>{{item.description}}</p>
+                                                    <span class="badge text-bg-info">{{item.keyword}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                            <button type="button" class="btn btn-danger">Save</button>
+                                            <button type="button" class="btn btn-success">Apply</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            {% for item in projects %}
+                                {% if item.prof_name not in student[0].following %}
+                                <!-- Each project -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        {{ item.title }}
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <img src="{{ url_for('static', filename='img/prof.jpg') }}" class="img-fluid">
+                                                    <b>{{item.prof_name}}</b>
+                                                </div>
+                                                <div class="col">
+                                                    <p>{{item.description}}</p>
+                                                    <span class="badge text-bg-info">{{item.keyword}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                            <button type="button" class="btn btn-danger">Save</button>
+                                            <button type="button" class="btn btn-success">Apply</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="tab-pane fade" id="search" role="tabpanel" aria-labelledby="search-tab">
+                            <div class="input-group input-group-lg">
+                                <!--<span class="input-group-text" id="inputGroup-sizing-default">Enter your search query</span>
+                                <input type="text" class="form-control" aria-label="Sizing example input"  id="searchInput" aria-describedby="inputGroup-sizing-default" placeholder="Enter professor's name/research area"><button onclick="searchProfessors()">Search</button>-->
+                                
+                                <form action="/process_data" method="post">
+                                    <label for="data_input">Enter Data:</label>
+                                    <input type="text" id="data_input" name="user_data">
+                                    <input type="submit" value="Submit">
+                                </form>
+                                
+
+                            </div>
+                            <ul id="searchResults">
+                                <!-- Results will be displayed here -->
+                            </ul>
+                            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+                            <script>
+                                function searchProfessors() {
+                                const searchQuery = document.getElementById('searchInput').value;
+
+                                // Perform search request to Flask
+                                axios.post('/search', { search_query: searchQuery })
+                                    .then(function(response) {
+                                        displaySearchResults(response.data.professors);
+                                    })
+                                    .catch(function(error) {
+                                        console.error(error);
+                                    });
+                            }
+
+                            function displaySearchResults(professors) {
+                                const resultsContainer = document.getElementById('searchResults');
+
+                                // Clear previous results
+                                resultsContainer.innerHTML = '';
+
+                                // Display search results
+                                professors.forEach(function(professor) {
+                                    const listItem = document.createElement('li');
+                                    listItem.textContent = `Name: ${professor.name}, Research Topic: ${professor.research_topic}`;
+                                    resultsContainer.appendChild(listItem);
+                                });
+                            }
+                            </script>
+
+                        </div>
+                        <div class="tab-pane fade" id="profs" role="tabpanel" aria-labelledby="profs-tab">
+                            {% for item in professor %}
+                                {% if item.name in student[0].following %}
+                                <!-- Each project -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <b>{{item.name}}</b>
+                                                </div>
+                                                <div class="col">
+                                                    Institution: {{item.institution}}<br>
+                                                    Research Interest: {{item.keyword}}<br>
+                                                    Contact Information: <br>
+                                                    Primary Phone: {{item.contact.primary_phone_number}} <br>
+                                                    Secondary Phone: {{item.contact.secondary_phone_number}} <br>
+                                                    Primary Email: {{item.contact.primary_email}} <br>
+                                                    Secondary Email: {{item.contact.secondary_email}} <br>
+                                                    Personal Website: {{item.contact.website}} <br>
+                                                    LinkedIn Profile: {{item.contact.linkedIn}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                            <button type="button" class="btn btn-danger">Unfollow</button>
+                                            <button type="button" class="btn btn-success">View Projects</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                      </div>
+                      
+                      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                      <script>
+                        $(document).ready(function(){
+                          $('#myTab a').on('click', function (e) {
+                            e.preventDefault();
+                            $(this).tab('show');
+                            $(this).addClass('active').siblings().removeClass('active');
+                          });
+                        });
+                      </script>
+
+                </div>
+            </div>
+        </div>
+
+    </body>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</html>
