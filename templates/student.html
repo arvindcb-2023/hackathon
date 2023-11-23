@@ -110,46 +110,20 @@
                                 <!--<span class="input-group-text" id="inputGroup-sizing-default">Enter your search query</span>
                                 <input type="text" class="form-control" aria-label="Sizing example input"  id="searchInput" aria-describedby="inputGroup-sizing-default" placeholder="Enter professor's name/research area"><button onclick="searchProfessors()">Search</button>-->
                                 
-                                <form action="/process_data" method="post">
+                                <form action="/process_data_new" method="post">
                                     <label for="data_input">Enter Data:</label>
-                                    <input type="text" id="data_input" name="user_data">
+                                    <input type="text" id="data_input" name="user_data" required>
+                                    <select name="num_records" required>
+                                        <option value="10" selected>10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
                                     <input type="submit" value="Submit">
                                 </form>
                                 
 
                             </div>
-                            <ul id="searchResults">
-                                <!-- Results will be displayed here -->
-                            </ul>
-                            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-                            <script>
-                                function searchProfessors() {
-                                const searchQuery = document.getElementById('searchInput').value;
-
-                                // Perform search request to Flask
-                                axios.post('/search', { search_query: searchQuery })
-                                    .then(function(response) {
-                                        displaySearchResults(response.data.professors);
-                                    })
-                                    .catch(function(error) {
-                                        console.error(error);
-                                    });
-                            }
-
-                            function displaySearchResults(professors) {
-                                const resultsContainer = document.getElementById('searchResults');
-
-                                // Clear previous results
-                                resultsContainer.innerHTML = '';
-
-                                // Display search results
-                                professors.forEach(function(professor) {
-                                    const listItem = document.createElement('li');
-                                    listItem.textContent = `Name: ${professor.name}, Research Topic: ${professor.research_topic}`;
-                                    resultsContainer.appendChild(listItem);
-                                });
-                            }
-                            </script>
 
                         </div>
                         <div class="tab-pane fade" id="profs" role="tabpanel" aria-labelledby="profs-tab">

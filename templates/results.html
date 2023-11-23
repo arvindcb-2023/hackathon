@@ -16,25 +16,26 @@
         </nav>
         <h3>Results for your query:</h3>
         <table class="table table-responsive">
-            <tr>
-                <td colspan="6">Results matching professor's name</td>
+            <tr class="table-primary">
+                <td colspan="7"><b>Results matching paper name</b></td>
             </tr>
             <tr>
-                <th>Name</th>
-                <th>Institution</th>
-                <th>Branch</th>
-                <th>Research Interests</th>
-                <th>DOI of Papers published</th>
-                <th>Contact details</th>
+                <th>Journal</th>
+                <th>Country</th>
+                <th>Title</th>
+                <th>Authors</th>
+                <th>DOI (Visit the paper)</th>
+                <th>Keywords</th>
+                <th>Number of citations</th>
             </tr>
             {% if resultset1==[] %}
                 <tr class="table-danger">
-                    <td colspan="6">No records found matching professor's name based on your search criteria... Try again</td>
+                    <td colspan="7">No records found matching paper's name based on your search criteria... Try again</td>
                 </tr>
             {% endif %}
             {% if resultset1!=[] %}
                 {% for i in resultset1 %}
-                <tr>
+                <!--<tr>
                     <td><span class="badge text-bg-success">{{i.name}}</span></td>
                     <td>{{i.institution}}</td>
                     <td>{{i.branch}}</td>
@@ -44,53 +45,60 @@
                             {{j}}
                         {% endfor %}
                     </td>
+                    
+                </tr>-->
+                <tr>
+                    <td>{{i.journal}}</td>
+                    <td>{{i.country}}</td>
+                    <td>{{i.title}}</td>
+                    <td>{{i.authors}}</td>
+                    <td><a href="https://doi.org/{{i.doi}}" target="_blank">{{i.doi}}</a></td>
                     <td>
-                        {{i.contact.primary_phone_number}}
-                        {{i.contact.secondary_phone_number}}
-                        {{i.contact.primary_email}}
-                        {{i.contact.secondary_email}}
-                        {{i.website}}
-                        {{i.linkedIn}}
+                        {% for j in i.title.split() %}
+                        {% if j.lower() in l%}
+                        <span class="badge text-bg-warning">{{j}}</span>
+                        {% endif %}
+                        {% endfor %}
                     </td>
+
+                    <td>{{i.citation_count}}</td>
+                    
                 </tr>
                 {% endfor %}
             {% endif %}
-            <tr>
-                <td colspan="6">Results matching professor's research interests</td>
+            <tr class="table-primary">
+                <td colspan="7"><b>Results matching professor's name</b></td>
             </tr>
             <tr>
-                <th>Name</th>
-                <th>Institution</th>
-                <th>Branch</th>
-                <th>Research Interests</th>
-                <th>DOI of Papers published</th>
-                <th>Contact details</th>
+                <th>Journal</th>
+                <th>Country</th>
+                <th>Title</th>
+                <th>Authors</th>
+                <th>DOI (Visit the paper)</th>
+                <th>Keywords</th>
+                <th>Number of citations</th>
             </tr>
             {% if resultset2==[] %}
                 <tr class="table-danger">
-                    <td colspan="6">No records found matching professor's interests based on your search criteria... Try again</td>
+                    <td colspan="7">No records found matching professor's name based on your search criteria... Try again</td>
                 </tr>
             {% endif %}
             {% if resultset2!=[] %}
                 {% for i in resultset2 %}
                 <tr>
-                    <td>{{i.name}}</td>
-                    <td>{{i.institution}}</td>
-                    <td>{{i.branch}}</td>
-                    <td><span class="badge text-bg-success">{{i.keyword}}</span></td>
+                    <td>{{i.journal}}</td>
+                    <td>{{i.country}}</td>
+                    <td>{{i.title}}</td>
+                    <td>{{i.authors}}</td>
+                    <td><a href="https://doi.org/{{i.doi}}" target="_blank">{{i.doi}}</a></td>
                     <td>
-                        {% for j in i.papers %}
-                            {{j}}
+                        {% for j in i.title.split() %}
+                        {% if j.lower() in l%}
+                        <span class="badge text-bg-warning">{{j}}</span>
+                        {% endif %}
                         {% endfor %}
                     </td>
-                    <td>
-                        {{i.contact.primary_phone_number}}
-                        {{i.contact.secondary_phone_number}}
-                        {{i.contact.primary_email}}
-                        {{i.contact.secondary_email}}
-                        {{i.website}}
-                        {{i.linkedIn}}
-                    </td>
+                    <td>{{i.citation_count}}</td>  
                 </tr>
                 {% endfor %}
             {% endif %}
